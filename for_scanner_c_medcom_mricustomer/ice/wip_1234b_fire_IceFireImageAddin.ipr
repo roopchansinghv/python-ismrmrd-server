@@ -1,0 +1,23 @@
+<XProtocol> 
+{
+    <ID> 1000000 
+
+    <ParamMap.""> 
+    {
+    }
+
+    <ProtocolComposer."OpenReconConfigurator"> 
+    {
+        <Dll>"wip_1234b_fire_OpenRecon"
+    }
+
+    <ProtocolComposer."FireSshTunnelConfigurator"> 
+    {
+        <Dll>"wip_1234b_fire_IceFire"
+    }
+
+    <ProtocolComposer."FireConfigurator"> 
+    {
+        <Dll>"wip_1234b_fire_IceFire"
+    }
+}
