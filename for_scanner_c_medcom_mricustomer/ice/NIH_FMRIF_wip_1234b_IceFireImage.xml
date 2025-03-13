@@ -60,7 +60,9 @@
     <!-- Functor in the ICE chain that the emitter will be inserted after -->
     <!--<Anchor>none</Anchor>-->
     <!--<Anchor>extractMAG</Anchor>-->
-    <Anchor>DistorCor2D</Anchor>
+    <!--<Anchor>DistorCor2D</Anchor>--> <!-- FOR GRE -->
+    <Anchor>combineMAG</Anchor> <!-- FOR TFL -->
+    <!--<Anchor>EPIMaxwellCorr</Anchor>--> <!-- For product and CMRR multi-band BOLD EP2D sequences - just before imafinish module -->
     <!-- Pass data along original ICE functor chain downstream of emitter -->
     <PassOnData>true</PassOnData>
     <!-- Perform NormOrientation (DICOM orientation) on outgoing images -->
@@ -69,7 +71,7 @@
 
   <Injector>
     <!-- This is the Functor in the ICE chain that the injector will be inserted BEFORE -->
-    <Anchor>imafinish</Anchor>
+    <Anchor>imafinish</Anchor> <!-- FOR GRE, EP2D AND cmrr BOLD sequences -->
     <!-- Whether to use ICE mini header filling service -->
     <UseIceFillingMiniHeader>true</UseIceFillingMiniHeader>
     <!-- Override distortion correction mode (blank to use protocol mode, otherwise ND, DIS2D, or DIS3D) -->
