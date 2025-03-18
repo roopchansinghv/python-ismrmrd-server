@@ -59,10 +59,10 @@
   <ImageEmitter>
     <!-- Functor in the ICE chain that the emitter will be inserted after -->
     <!--<Anchor>none</Anchor>-->
-    <!--<Anchor>extractMAG</Anchor>-->
-    <!--<Anchor>DistorCor2D</Anchor>--> <!-- FOR GRE -->
-    <Anchor>combineMAG</Anchor> <!-- FOR TFL -->
-    <!--<Anchor>EPIMaxwellCorr</Anchor>--> <!-- For product and CMRR multi-band BOLD EP2D sequences - just before imafinish module -->
+    <!--<Anchor>extractMAG</Anchor>--> <!-- for mini-FLASH -->
+    <!--<Anchor>DistorCor2D</Anchor>--> <!-- for 2D-GRE / 'fl' -->
+    <!--<Anchor>combineMAG</Anchor>--> <!-- for TFL / 'tfl' -->
+    <Anchor>EPIMaxwellCorr</Anchor> <!-- for product and CMRR multi-band BOLD EP2D sequences - just before imafinish module -->
     <!-- Pass data along original ICE functor chain downstream of emitter -->
     <PassOnData>true</PassOnData>
     <!-- Perform NormOrientation (DICOM orientation) on outgoing images -->
@@ -71,7 +71,7 @@
 
   <Injector>
     <!-- This is the Functor in the ICE chain that the injector will be inserted BEFORE -->
-    <Anchor>imafinish</Anchor> <!-- FOR GRE, EP2D AND cmrr BOLD sequences -->
+    <Anchor>imafinish</Anchor> <!-- for GRE, EP2D BOLD sequences -->
     <!-- Whether to use ICE mini header filling service -->
     <UseIceFillingMiniHeader>true</UseIceFillingMiniHeader>
     <!-- Override distortion correction mode (blank to use protocol mode, otherwise ND, DIS2D, or DIS3D) -->
@@ -81,7 +81,7 @@
   <Configurator>
     <!-- Disable NoiseAdjust and other system noise handling when sending raw data -->
     <DisableSystemNoiseAdjust>false</DisableSystemNoiseAdjust>
-    <!-- If true, the Injector ignore received image data -->
+    <!-- If 'true', the Injector ignores received image data and stores only the "original" images, while 'false' creates 2 series, one with "original" ICE images, and the 2nd from images computed by FIRE recon -->
     <OnlyEmitData>true</OnlyEmitData>
     <!-- If true, the OpenRecon configurator will auto determine where to insert ImageEmmiter(if activated) and Injector -->
     <AutoConfigure>false</AutoConfigure>
