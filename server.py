@@ -14,6 +14,7 @@ import signal
 import simplefft
 import invertcontrast
 import analyzeflow
+import afni_sender
 
 class Server:
     """
@@ -118,6 +119,9 @@ class Server:
             elif (config == "analyzeflow"):
                 logging.info("Starting analyzeflow processing based on config")
                 analyzeflow.process(connection, configAdditional, metadata)
+            elif (config == "afni_sender"):
+                logging.info("Starting analyzeflow processing based on config")
+                afni_sender.process(connection, configAdditional, metadata)
             elif (config == "null"):
                 logging.info("No processing based on config")
                 try:
