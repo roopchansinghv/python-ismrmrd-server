@@ -121,9 +121,10 @@ class Server:
                 analyzeflow.process(connection, configAdditional, metadata)
             elif (config == "afni_sender"):
                 logging.info("Starting analyzeflow processing based on config")
-                afni_host   = '127.0.0.1'
-                afni_port   = 7961
-                afni_sender.process(connection, configAdditional, metadata, afni_host, afni_port)
+                afni_host         = '127.0.0.1'
+                afni_port_data    = 7960
+                afni_port_control = 7961
+                afni_sender.process(connection, configAdditional, metadata, afni_host, afni_port_control, afni_port_data)
             elif (config == "null"):
                 logging.info("No processing based on config")
                 try:
