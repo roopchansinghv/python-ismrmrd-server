@@ -261,6 +261,13 @@ Conda is a Python environment manager that is useful for creating and maintainin
     pip install ismrmrd
     ```
 
+1. The [ismrmrd-python-tools](https://github.com/ismrmrd/ismrmrd-python-tools) contain useful libraries for simulations, including generation of simulated raw k-space data used by [generate_cartesian_shepp_logan_dataset](./generate_cartesian_shepp_logan_dataset.py).  Install it by cloning the repository and using `pip install .` (note the trailing `.`) in the folder.
+    ```
+    git clone https://github.com/ismrmrd/ismrmrd-python-tools.git
+    cd ismrmrd-python-tools
+    pip3 install .
+    ```
+
 To use this environment in the future, open a command prompt and run ``micromamba activate mrd``.
 
 ###  2.3. <a name='SettingupaDockerenvironment'></a>Setting up a Docker environment
@@ -354,13 +361,16 @@ This code is designed to provide a reference implementation of an MRD client/ser
 - [mrd2gif.py](mrd2gif.py): This program converts an MRD image .h5 file into an animated GIF for quick previews.
 
 There are several example "modules" that can be selected by specifying their name via the config (`-c`) argument:
-- [invertcontrast.py](invertcontrast.py): This program accepts both incoming raw data as well as image data.  The image contrast is inverted and images are sent back to the client.
+- [invertcontrast.py](invertcontrast.py): This module accepts both incoming raw data as well as image data.  The image contrast is inverted and images are sent back to the client.
 
-- [simplefft.py](simplefft.py): This file contains code for performing a rudimentary image reconstruction from raw data, consisting of a Fourier transform, sum-of-squares coil combination, signal intensity normalization, and removal of phase oversampling.
+- [simplefft.py](simplefft.py): This module contains code for performing a rudimentary image reconstruction from raw data, consisting of a Fourier transform, sum-of-squares coil combination, signal intensity normalization, and removal of phase oversampling.
 
-- [rgb.py](rgb.py): This program accepts incoming image data, applies a jet colormap, and sends RGB images back to the client.
+- [analyzeflow.py](analyzeflow.py): This module accepts velocity phase contrast image data and performs basic masking.
 
-- [analyzeflow.py](analyzeflow.py): This program accepts velocity phase contrast image data and performs basic masking.
+- [report.py](report.py): This module provides an example of generating report from a dictionary of parameters (keys) and their corresponding values.  An image with a text table is returned to the client and values are stored in the MetaAttributes to allow for batch scripted parsing.
+
+### 3.1 <a name='Jsonconfig'></a>Additional (JSON) config
+It is often useful for a client to provide additional configuration parameters during runtime to a module without changing code in the module itself.  For example this could be used to tune filter parameters, toggle additional outputs, or control optional processing steps.  The [client.py](client.py) is configured to look for a config file in the current folder, matching the name of the module and ending in `.json`, e.g. `invertcontrast.json` if the config module is named `invertcontrast`.  The example [invertcontrast.json](invertcontrast.json) can be modified with the `options` parameter set to `roi` to add an example ROI, `colormap` to add a color lookup table, and `rgb` to return an RGB image.
 
 ##  4. <a name='Savingincomingdata'></a>Saving incoming data
 It may be desirable for the MRD server to save a copy of incoming data from the client.  For example, if the client is an MRI scanner, then the saved data can be used for offline simulations at a later time.  This may be particularly useful when the MRI scanner client is sending image data, as images are not stored in a scanner's raw data file and would otherwise require offline simulation of the MRI scanner reconstruction as well.
