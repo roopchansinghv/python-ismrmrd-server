@@ -13,6 +13,8 @@ import   nibabel        as       nib
 
 
 
+### Following [this](https://gadgetron.discourse.group/t/reading-ismrmrd-image-type/322/4) suggestion from David Hansen
+
 ## First - read in file with reconstructed image data
 f = ismrmrd.File('reconstructed_data.h5')
 
@@ -52,7 +54,6 @@ for image_set in image_sets:
       for header_value_key in header_keys_for_nifti:
          print ("Header value %27s from image set %d is: %s" % (header_value_key, j, image_set.headers[j][header_value_key]))
 
-
 ### Now create NIFTI-1 dataset from one of the data arrays read in from the ISMRMRD image sets.
 
 # Transpose seems to be necessary to pack data properly
@@ -63,6 +64,11 @@ nii_image_data = image_sets[0].data[0::].transpose(4,3,2,1,0)
 # should inherit those data's dimensions and data types, which should leave the geometry and position information
 # to be later computed and filled in.
 new_nii = nib.Nifti1Image(nii_image_data, None)
+
+# According to https://github.com/NIFTI-Imaging/nifti_clib/blob/master/nifti2/nifti1.h, lines 1310 - 1350 (approx),
+# get units of space and time for values packed into header. Distance units in mm == 2, and time units in ms == 16
+# (defaults for ISMRMRD image header).  See if there's way to get these symbolically, instead of hard-coding ...
+new_nii.header.set_xyzt_units(xyz=2, t=16)
 
 print("\nNew nii header: " + str(new_nii.header))
 
