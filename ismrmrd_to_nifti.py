@@ -55,8 +55,12 @@ for image_set_index, image_set in enumerate(image_sets):
       # for header_value_key in header_keys_for_nifti:
          # print ("Header value %27s from image set %d is: %s" % (header_value_key, j, image_set.headers[j][header_value_key]))
 
-   ### Now create NIFTI-1 dataset from one of the data arrays read in from the ISMRMRD image sets.
+   # According to https://ismrmrd.readthedocs.io/en/latest/mrd_image_data.html#imageheader, the dimensions of the
+   # ISMRMRD image data set should be matrix_size[0], matrix_size[1], matrix_size[2], channels, then the 'images'
+   # themselves ... or rather the exact reverse of this ...
+   print("Shape of ISMRMRD data is: " + str(image_set.data.shape))
 
+   # Create NIFTI-1 dataset from one of the data arrays read in from the ISMRMRD image sets.
    # Transpose seems to be necessary to pack data properly
    nii_image_data = image_set.data[0::].transpose(4,3,2,1,0)
 
