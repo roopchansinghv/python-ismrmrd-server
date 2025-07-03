@@ -49,11 +49,14 @@ header_keys_for_nifti = [
 
 # Iterate over all sets within the ISMRMRD file. This should generate 1 NIFTI file per group (to be later confirmed)
 for image_set_index, image_set in enumerate(image_sets):
+   # ISMRMRD header has index value for "slice", so the total number of slices should the max value of this + 1
    print ("Max slice index value in this image set is: %d" % max(image_set.headers[:]["slice"]))
+   num_slices = max(image_set.headers[:]["slice"]) + 1
    # Now iterate over all images within each set.  Hopefully each image within a set has the same dimensions
-   # for j in range(image_set.headers.size):
+   for j in range(image_set.headers.size):
       # for header_value_key in header_keys_for_nifti:
          # print ("Header value %27s from image set %d is: %s" % (header_value_key, j, image_set.headers[j][header_value_key]))
+      print ("For image %d, slice index is %d, position is %s, for repetition %d" %(j, image_set.headers[j]["slice"], str(image_set.headers[j]["position"]), image_set.headers[j]["repetition"]))
 
    # According to https://ismrmrd.readthedocs.io/en/latest/mrd_image_data.html#imageheader, the dimensions of the
    # ISMRMRD image data set should be matrix_size[0], matrix_size[1], matrix_size[2], channels, then the 'images'
