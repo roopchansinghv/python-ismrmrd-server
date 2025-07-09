@@ -47,41 +47,58 @@ header_keys_for_nifti = [
   "image_series_index"
 ]
 
-# Iterate over all sets within the ISMRMRD file. This should generate 1 NIFTI file per group (to be later confirmed)
+# Iterate over all sets within the ISMRMRD file. This should generate 1 NIFTI file per group (to be later
+# confirmed)
 for image_set_index, image_set in enumerate(image_sets):
-   # ISMRMRD header has index value for "slice", so the total number of slices should the max value of this + 1
+   # ISMRMRD header has index value for "slice", so the total number of slices should the max value of
+   # this + 1
    print ("Max slice index value in this image set is: %d" % max(image_set.headers[:]["slice"]))
    num_slices = max(image_set.headers[:]["slice"]) + 1
-   # Now iterate over all images within each set.  Hopefully each image within a set has the same dimensions
+   num_repetitions = max(image_set.headers[:]["repetition"]) + 1
+   # Now iterate over all images within each set.  Hopefully each image within a set has the same
+   # dimensions
    for j in range(image_set.headers.size):
       # for header_value_key in header_keys_for_nifti:
          # print ("Header value %27s from image set %d is: %s" % (header_value_key, j, image_set.headers[j][header_value_key]))
-      print ("For image %d, slice index is %d, position is %s, for repetition %d" %(j, image_set.headers[j]["slice"], str(image_set.headers[j]["position"]), image_set.headers[j]["repetition"]))
+      print (f"For image {j}, slice index is {image_set.headers[j]['slice']}, position is {image_set.headers[j]['position']} , for repetition {image_set.headers[j]['repetition']}")
 
-   # According to https://ismrmrd.readthedocs.io/en/latest/mrd_image_data.html#imageheader, the dimensions of the
-   # ISMRMRD image data set should be matrix_size[0], matrix_size[1], matrix_size[2], channels, then the 'images'
-   # themselves ... or rather the exact reverse of this ...
+   # According to https://ismrmrd.readthedocs.io/en/latest/mrd_image_data.html#imageheader, the dimensions
+   # of the # ISMRMRD image data set should be matrix_size[0], matrix_size[1], matrix_size[2], channels,
+   # then the 'images' themselves ... or rather the exact reverse of this ...
    print("Shape of ISMRMRD data is: " + str(image_set.data.shape))
+
+   # Should reshape ISMRMRD data here, based on values of indices and slice positions.  For timing, we can
+   # use image_set.headers[j]["repetition"], and to get slices in the right place, we can use the elements
+   # of  image_set.headers[j]["position"] - which (according to ISMRMRD documentation) has the position of
+   # the center voxel of image in LPS coordinates.
+
+   # Build new numpy array to reorder based on repetition and slice position (which for initial exmaple
+   # here, is: image_set.headers[j]["position"][2]
+
+   nifti_data = np.zeros([image_set.headers[0]['matrix_size'][0], image_set.headers[0]['matrix_size'][1],
+                          num_slices, num_repetitions], dtype=image_set.data[0].dtype)
 
    # Create NIFTI-1 dataset from one of the data arrays read in from the ISMRMRD image sets.
    # Transpose seems to be necessary to pack data properly
    nii_image_data = image_set.data[0::].transpose(4,3,2,1,0)
 
-   print("Shape of NIFTI data is: " + str(nii_image_data.shape))
+   print(f"Shape of NIFTI data is {nii_image_data.shape}")
 
-   # Then, create NIFTI data set in memory from image data component from ISMRMRD image sets.  The NIFTI data set
-   # should inherit those data's dimensions and data types, which should leave the geometry and position information
-   # to be later computed and filled in.
+   # Then, create NIFTI data set in memory from image data component from ISMRMRD image sets.  The NIFTI
+   # data set should inherit those data's dimensions and data types, which should leave the geometry and
+   # position information to be later computed and filled in.
    new_nii = nib.Nifti1Image(nii_image_data, None)
 
-   # According to https://github.com/NIFTI-Imaging/nifti_clib/blob/master/nifti2/nifti1.h, lines 1310 - 1350 (approx),
-   # get units of space and time for values packed into header. Distance units in mm == 2, and time units in ms == 16
-   # (defaults for ISMRMRD image header).  See if there's way to get these symbolically, instead of hard-coding ...
+   # According to https://github.com/NIFTI-Imaging/nifti_clib/blob/master/nifti2/nifti1.h, lines 1310 - 1350
+   # (approx), get units of space and time for values packed into header. Distance units in mm == 2 and time
+   # units in ms == 16 (defaults for ISMRMRD image header).  See if there's way to get these symbolically,
+   # instead of hard-coding ...
    new_nii.header.set_xyzt_units(xyz=2, t=16)
 
    # print("\nNew nii header: " + str(new_nii.header))
 
-   # Can access NIFTI header elements through keys, similar to how the ISMRMRD image header values above are accessed.
+   # Can access NIFTI header elements through keys, similar to how the ISMRMRD image header values above are
+   # accessed.
    # print("Original header dim:" + str(new_nii.header['dim']))
 
    # Can change these, from ISMRMRD header values, as needed.
