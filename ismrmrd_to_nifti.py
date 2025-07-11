@@ -73,6 +73,9 @@ for image_set_index, image_set in enumerate(image_sets):
          # print ("Header value %27s from image set %d is: %s" % (header_value_key, j, image_set.headers[j][header_value_key]))
       print (f"For image {j}, slice index is {image_set.headers[j]['slice']}, position is {image_set.headers[j]['position']} , for repetition {image_set.headers[j]['repetition']}")
 
+      # Using information from:   https://brainder.org/2012/09/23/the-nifti-file-format/   to get a bit
+      # more clarity on data organization in NIFTI, and how to insert data from ISMRMRD.  According to
+      # this links, the data dimenstions in NIFTI are x, y, z, and t.
       nifti_data[:, :, image_set.headers[j]['slice'], image_set.headers[j]['repetition']] = image_set.data[j, 0, 0].transpose(1,0)
 
    # According to https://ismrmrd.readthedocs.io/en/latest/mrd_image_data.html#imageheader, the dimensions
