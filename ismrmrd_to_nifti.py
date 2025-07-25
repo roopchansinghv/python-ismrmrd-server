@@ -61,6 +61,10 @@ for image_set_index, image_set in enumerate(image_sets):
    # of  image_set.headers[j]["position"] - which (according to ISMRMRD documentation) has the position of
    # the center voxel of image in LPS coordinates.
 
+   # image_set = sorted(image_set, key = lambda x: (x[1], x[2]))
+   # image_set = sorted(sorted(image_set.headers, key = lambda x: (x['repetition'])), lambda x: (x['position']))
+   header_sorted_on_reps = sorted(image_set.headers, key = lambda x: (x['repetition'], x['position']))
+
    # Build new numpy array using dimensions of image data from ISMRMRD.
 
    nifti_data = np.zeros([image_set.headers[0]['matrix_size'][0], image_set.headers[0]['matrix_size'][1],
