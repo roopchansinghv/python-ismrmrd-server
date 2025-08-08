@@ -61,9 +61,17 @@ for image_set_index, image_set in enumerate(image_sets):
    # of  image_set.headers[j]["position"] - which (according to ISMRMRD documentation) has the position of
    # the center voxel of image in LPS coordinates.
 
+   # examples:
+   #
+   #   https://www.programiz.com/python-programming/methods/list/sort
+   #   https://docs.python.org/3/howto/sorting.html
+   #   https://www.geeksforgeeks.org/python/python-list-sort-method/#
+   #   https://www.geeksforgeeks.org/python/sort-a-list-of-objects-by-multiple-attributes-in-python/
+   #   https://stackoverflow.com/questions/4233476/sort-a-list-by-multiple-attributes
+   #
    # image_set = sorted(image_set, key = lambda x: (x[1], x[2]))
    # image_set = sorted(sorted(image_set.headers, key = lambda x: (x['repetition'])), lambda x: (x['position']))
-   header_sorted_on_reps = sorted(image_set.headers, key = lambda x: (x['repetition'], x['position']))
+   header_sorted_on_reps = sorted(image_set.headers, key = lambda x: (x['repetition']))
 
    # Build new numpy array using dimensions of image data from ISMRMRD.
 
