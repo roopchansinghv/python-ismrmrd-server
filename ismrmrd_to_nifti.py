@@ -70,8 +70,22 @@ for image_set_index, image_set in enumerate(image_sets):
    #   https://stackoverflow.com/questions/4233476/sort-a-list-by-multiple-attributes
    #
    # image_set = sorted(image_set, key = lambda x: (x[1], x[2]))
-   # image_set = sorted(sorted(image_set.headers, key = lambda x: (x['repetition'])), lambda x: (x['position']))
-   header_sorted_on_reps = sorted(image_set.headers, key = lambda x: (x['repetition']))
+   #
+   # Example code that works:
+   #
+   # employees = [
+   #    {'name': 'John', 'department': 'Engineering', 'surname': 'Doe'},
+   #    {'name': 'Jane', 'department': 'Marketing', 'surname': 'Smith'},
+   #    {'name': 'Dave', 'department': 'Engineering', 'surname': 'Jones'},
+   #    {'name': 'Mike', 'department': 'Marketing', 'surname': 'Avery'}
+   # ]
+   #
+   # # Sort first by 'department', then by 'surname'
+   # sorted_employees = sorted(employees, key=lambda x: (x['department'], x['surname']))
+   #
+   # Now, for code here:
+   #
+   # image_set = sorted(image_set, key=lambda x: (x.headers[:]['repetition'], x['position']))
 
    # Build new numpy array using dimensions of image data from ISMRMRD.
 
