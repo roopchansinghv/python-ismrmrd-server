@@ -59,38 +59,12 @@ for image_set_index, image_set_unsorted in enumerate(image_sets):
    image_matrix_0  = image_set_unsorted.headers[0]['matrix_size'][0]
    image_matrix_1  = image_set_unsorted.headers[0]['matrix_size'][1]
 
-   image_set = sorted(image_set_unsorted, key=lambda x: (x.getHead().repetition, x.getHead().position[2]))
-
    # Should reshape ISMRMRD data here, based on values of indices and slice positions.  For timing, we can
    # use image_set.headers[j]["repetition"], and to get slices in the right place, we can use the elements
    # of  image_set.headers[j]["position"] - which (according to ISMRMRD documentation) has the position of
    # the center voxel of image in LPS coordinates.
 
-   # examples:
-   #
-   #   https://www.programiz.com/python-programming/methods/list/sort
-   #   https://docs.python.org/3/howto/sorting.html
-   #   https://www.geeksforgeeks.org/python/python-list-sort-method/#
-   #   https://www.geeksforgeeks.org/python/sort-a-list-of-objects-by-multiple-attributes-in-python/
-   #   https://stackoverflow.com/questions/4233476/sort-a-list-by-multiple-attributes
-   #
-   # image_set = sorted(image_set, key = lambda x: (x[1], x[2]))
-   #
-   # Example code that works:
-   #
-   # employees = [
-   #    {'name': 'John', 'department': 'Engineering', 'surname': 'Doe'},
-   #    {'name': 'Jane', 'department': 'Marketing', 'surname': 'Smith'},
-   #    {'name': 'Dave', 'department': 'Engineering', 'surname': 'Jones'},
-   #    {'name': 'Mike', 'department': 'Marketing', 'surname': 'Avery'}
-   # ]
-   #
-   # # Sort first by 'department', then by 'surname'
-   # sorted_employees = sorted(employees, key=lambda x: (x['department'], x['surname']))
-   #
-   # Now, for code here:
-   #
-   # image_set = sorted(image_set, key=lambda x: (x.headers[:]['repetition'], x['position']))
+   image_set = sorted(image_set_unsorted, key=lambda x: (x.getHead().repetition, x.getHead().position[2]))
 
    # Build new numpy array using dimensions of image data from ISMRMRD.
 
@@ -100,9 +74,6 @@ for image_set_index, image_set_unsorted in enumerate(image_sets):
    # Now iterate over all images within each set.  Hopefully each image within a set has the same
    # dimensions
    for j in range(len(image_set)):
-      # for header_value_key in header_keys_for_nifti:
-         # print ("Header value %27s from image set %d is: %s" % (header_value_key, j, image_set.headers[j][header_value_key]))
-      # print (f"For image {j}, slice index is {image_set.headers[j]['slice']}, position is {image_set.headers[j]['position']} , for repetition {image_set.headers[j]['repetition']}")
 
       # Using information from:   https://brainder.org/2012/09/23/the-nifti-file-format/   to get a bit
       # more clarity on data organization in NIFTI, and how to insert data from ISMRMRD.  According to
@@ -113,15 +84,6 @@ for image_set_index, image_set_unsorted in enumerate(image_sets):
    # of the # ISMRMRD image data set should be matrix_size[0], matrix_size[1], matrix_size[2], channels,
    # then the 'images' themselves ... or rather the exact reverse of this ...
    # print("Shape of ISMRMRD data is: " + str(image_set.data.shape))
-
-   # Now reorder based on repetition and slice position (which for initial exmaple here, is:
-   # image_set.headers[j]["position"][2]
-
-   # Create NIFTI-1 dataset from one of the data arrays read in from the ISMRMRD image sets.
-   # Transpose seems to be necessary to pack data properly
-   #   nii_image_data = image_set.data[0::].transpose(4,3,2,1,0)
-
-   # print(f"Shape of NIFTI data is {nii_image_data.shape}")
 
    # Then, create NIFTI data set in memory from image data component from ISMRMRD image sets.  The NIFTI
    # data set should inherit those data's dimensions and data types, which should leave the geometry and
@@ -134,19 +96,6 @@ for image_set_index, image_set_unsorted in enumerate(image_sets):
    # units in ms == 16 (defaults for ISMRMRD image header).  See if there's way to get these symbolically,
    # instead of hard-coding ...
    new_nii.header.set_xyzt_units(xyz=2, t=16)
-
-   # print("\nNew nii header: " + str(new_nii.header))
-
-   # Can access NIFTI header elements through keys, similar to how the ISMRMRD image header values above are
-   # accessed.
-   # print("Original header dim:" + str(new_nii.header['dim']))
-
-   # Can change these, from ISMRMRD header values, as needed.
-   # new_nii.header['dim'] = [  5, 144, 144,   1,   1,  7,   1,   1]
-
-   # print("New header dim:" + str(new_nii.header['dim']))
-
-   # print(f"\nUpdated nii header: {new_nii.header}")
 
    nib.save(new_nii, 'new_test_nifti_%09d.nii' % image_set_index)
 
