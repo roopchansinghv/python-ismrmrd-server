@@ -49,12 +49,17 @@ header_keys_for_nifti = [
 
 # Iterate over all sets within the ISMRMRD file. This should generate 1 NIFTI file per group (to be later
 # confirmed)
-for image_set_index, image_set in enumerate(image_sets):
+for image_set_index, image_set_unsorted in enumerate(image_sets):
+
    # ISMRMRD header has index value for "slice", so the total number of slices should the max value of
    # this + 1, and similarly for repetitions
-   num_slices      = max(image_set.headers[:]["slice"]) + 1
-   num_repetitions = max(image_set.headers[:]["repetition"]) + 1
-   print (f"Max slice index and repetition values in this image set are: {max(image_set.headers[:]['slice'])} and {max(image_set.headers[:]['repetition'])}")
+   num_slices      = max(image_set_unsorted.headers[:]["slice"]) + 1
+   num_repetitions = max(image_set_unsorted.headers[:]["repetition"]) + 1
+   print (f"Max slice index and repetition values in this image set are: {num_slices} and {num_repetitions}")
+   image_matrix_0  = image_set_unsorted.headers[0]['matrix_size'][0]
+   image_matrix_1  = image_set_unsorted.headers[0]['matrix_size'][1]
+
+   image_set = sorted(image_set_unsorted, key=lambda x: (x.getHead().repetition, x.getHead().position[2]))
 
    # Should reshape ISMRMRD data here, based on values of indices and slice positions.  For timing, we can
    # use image_set.headers[j]["repetition"], and to get slices in the right place, we can use the elements
@@ -89,25 +94,25 @@ for image_set_index, image_set in enumerate(image_sets):
 
    # Build new numpy array using dimensions of image data from ISMRMRD.
 
-   nifti_data = np.zeros([image_set.headers[0]['matrix_size'][0], image_set.headers[0]['matrix_size'][1],
-                          num_slices, num_repetitions], dtype=image_set.data[0].dtype)
+   nifti_data = np.zeros([image_matrix_0, image_matrix_1,
+                          num_slices, num_repetitions], dtype=image_set_unsorted.data[0].dtype)
 
    # Now iterate over all images within each set.  Hopefully each image within a set has the same
    # dimensions
-   for j in range(image_set.headers.size):
+   for j in range(len(image_set)):
       # for header_value_key in header_keys_for_nifti:
          # print ("Header value %27s from image set %d is: %s" % (header_value_key, j, image_set.headers[j][header_value_key]))
-      print (f"For image {j}, slice index is {image_set.headers[j]['slice']}, position is {image_set.headers[j]['position']} , for repetition {image_set.headers[j]['repetition']}")
+      # print (f"For image {j}, slice index is {image_set.headers[j]['slice']}, position is {image_set.headers[j]['position']} , for repetition {image_set.headers[j]['repetition']}")
 
       # Using information from:   https://brainder.org/2012/09/23/the-nifti-file-format/   to get a bit
       # more clarity on data organization in NIFTI, and how to insert data from ISMRMRD.  According to
       # this links, the data dimenstions in NIFTI are x, y, z, and t.
-      nifti_data[:, :, image_set.headers[j]['slice'], image_set.headers[j]['repetition']] = image_set.data[j, 0, 0].transpose(1,0)
+      nifti_data[:, :, j%num_slices, image_set[j].repetition] = image_set[j].data[0, 0].transpose(1,0)
 
    # According to https://ismrmrd.readthedocs.io/en/latest/mrd_image_data.html#imageheader, the dimensions
    # of the # ISMRMRD image data set should be matrix_size[0], matrix_size[1], matrix_size[2], channels,
    # then the 'images' themselves ... or rather the exact reverse of this ...
-   print("Shape of ISMRMRD data is: " + str(image_set.data.shape))
+   # print("Shape of ISMRMRD data is: " + str(image_set.data.shape))
 
    # Now reorder based on repetition and slice position (which for initial exmaple here, is:
    # image_set.headers[j]["position"][2]
