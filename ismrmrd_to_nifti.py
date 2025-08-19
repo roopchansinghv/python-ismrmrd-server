@@ -66,7 +66,11 @@ for image_set_index, image_set_unsorted in enumerate(image_sets):
 
    # Initially, sorting over the last element in position (likely 'z'), so for an axial slice orientation,
    # this would step through slice positions.
-   image_set = sorted(image_set_unsorted, key=lambda x: (x.getHead().repetition, x.getHead().position[2]))
+   # image_set = sorted(image_set_unsorted, key=lambda x: (x.getHead().repetition, x.getHead().position[2]))
+   # Try using all elements in position, as a string now, in case there's incrementing through multiple
+   # dimensions.  For the first sample axial acquisition, the output from sorting on str(x.getHead().position[:])
+   # was identical to sorting on x.getHead().position[2]) as the 2nd sorting criteria.
+   image_set = sorted(image_set_unsorted, key=lambda x: (x.getHead().repetition, str(x.getHead().position[:])))
 
    # Build new numpy array using dimensions of image data from ISMRMRD.
 
