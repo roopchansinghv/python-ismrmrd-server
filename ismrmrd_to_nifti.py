@@ -64,6 +64,8 @@ for image_set_index, image_set_unsorted in enumerate(image_sets):
    # of  image_set.headers[j]["position"] - which (according to ISMRMRD documentation) has the position of
    # the center voxel of image in LPS coordinates.
 
+   # Initially, sorting over the last element in position (likely 'z'), so for an axial slice orientation,
+   # this would step through slice positions.
    image_set = sorted(image_set_unsorted, key=lambda x: (x.getHead().repetition, x.getHead().position[2]))
 
    # Build new numpy array using dimensions of image data from ISMRMRD.
