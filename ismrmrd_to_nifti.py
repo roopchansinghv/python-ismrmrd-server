@@ -79,12 +79,15 @@ for image_set_index, image_set_unsorted in enumerate(image_sets):
 
    # Now iterate over all images within each set.  Hopefully each image within a set has the same
    # dimensions
-   for j in range(len(image_set)):
+   for img_idx, each_img_header in enumerate(image_set_unsorted.headers):
 
+      for element_name in each_img_header.dtype.names:
+
+         print (f"{element_name} : {each_img_header[element_name]}")
       # Using information from:   https://brainder.org/2012/09/23/the-nifti-file-format/   to get a bit
       # more clarity on data organization in NIFTI, and how to insert data from ISMRMRD.  According to
       # this links, the data dimenstions in NIFTI are x, y, z, and t.
-      nifti_data[:, :, j%num_slices, image_set[j].repetition] = image_set[j].data[0, 0].transpose(1,0)
+      nifti_data[:, :, img_idx%num_slices, image_set[img_idx].repetition] = image_set[img_idx].data[0, 0].transpose(1,0)
 
    # According to https://ismrmrd.readthedocs.io/en/latest/mrd_image_data.html#imageheader, the dimensions
    # of the # ISMRMRD image data set should be matrix_size[0], matrix_size[1], matrix_size[2], channels,
