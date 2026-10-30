@@ -23,6 +23,12 @@ image_sets = [f[image_set].images for image_set in f.find_images()]
 
 len(image_sets)
 
+# Image sets mirror C structs, so use Numpy documentation on Structured Arrays, here:
+#
+#    https://numpy.org/doc/stable/user/basics.rec.html
+#
+# to get the mechanics about how to work with these data types.
+
 # This should now tell us how many images are present within a give image group/set.
 # Should look up a better way to do this iteration.
 image_sets[0].headers.size
