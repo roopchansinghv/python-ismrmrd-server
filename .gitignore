@@ -5,4 +5,5 @@
 .virtualenv
 *.tar
 *.zip
+.DS_Store
 data/
